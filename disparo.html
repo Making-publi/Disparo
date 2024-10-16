@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+// Lista de números
+var numbers = ["5511977966442", "5511952465388", "5511959999181", "5511953630745"];
+
+// Ordena os números em ordem crescente
+numbers.sort();
+
+// Seleciona um número aleatório da lista
+var randomIndex = Math.floor(Math.random() * numbers.length);
+var selectedNumber = numbers[randomIndex];
+
+// Cria a URL do WhatsApp
+var whatsappURL = "https://wa.me/" + selectedNumber + "?text=" + encodeURIComponent("Quero saber mais sobre essa oferta");
+
+// Redireciona para o WhatsApp
+window.location.href = whatsappURL;
+
+    </script>
+</head>
+<body>
+</body>
+</html>
+
