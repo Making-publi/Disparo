@@ -1,41 +1,78 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Redirecionamento para WhatsApp</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <script>
+        // Configuração completa do Firebase, incluindo databaseURL
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPCFnxJa1M-NPbMlYahHQugrzBrELxfjE",
+            authDomain: "disparo-3e049.firebaseapp.com",
+            databaseURL: "https://disparo-3e049-default-rtdb.firebaseio.com", // Inclua o databaseURL correto aqui
+            projectId: "disparo-3e049",
+            storageBucket: "disparo-3e049.appspot.com", // Corrigido o storageBucket
+            messagingSenderId: "266478919963",
+            appId: "1:266478919963:web:3a8514a5f5af9586bbf3be"
+        };
+
+        // Inicializar o Firebase
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
         // Lista de números
-        var numbers = ["5511952167370","5511961397377", "5511977990236", "5511959999181", "5511962183523", "5511984564873", "5511981122601", "5511987222977", "5511961375826", "5511959048153"];
+        var numbers = 
+        ["5511952167370","5511961397377", "5511977990236", "5511959999181", 
+        "5511962183523", "5511984564873", "5511981122601", "5511987222977", 
+        "5511961375826", "5511959048153"];
 
-        function getNextNumber() {
-            // Recupera o índice do último número utilizado do localStorage, ou -1 se não existir
-            var lastIndex = parseInt(localStorage.getItem('lastIndex'));
-            if (isNaN(lastIndex)) {
-                lastIndex = -1;
-            }
 
-            // Calcula o próximo índice de forma circular
-            var nextIndex = (lastIndex + 1) % numbers.length;
+        // Função para obter e atualizar o próximo índice
+        async function getNextNumber() {
+            const indexRef = database.ref('lastIndex');
 
-            // Atualiza o índice no localStorage
-            localStorage.setItem('lastIndex', nextIndex);
-
-            // Retorna o próximo número da lista
-            return numbers[nextIndex];
+            return new Promise((resolve, reject) => {
+                indexRef.transaction(currentIndex => {
+                    if (currentIndex === null) {
+                        return 0;
+                    }
+                    return (currentIndex + 1) % numbers.length;
+                }, (error, committed, snapshot) => {
+                    if (error) {
+                        console.error('Transação falhou:', error);
+                        reject(error);
+                    } else if (!committed) {
+                        reject('Transação não foi comprometida.');
+                    } else {
+                        const newIndex = snapshot.val();
+                        resolve(newIndex);
+                    }
+                });
+            });
         }
 
-        // Redireciona automaticamente assim que a página é carregada
-        window.onload = function() {
-            // Seleciona o próximo número
-            var selectedNumber = getNextNumber();
+        // Função para redirecionar para WhatsApp
+        async function redirectToWhatsApp() {
+            try {
+                var nextIndex = await getNextNumber();
+                var selectedNumber = numbers[nextIndex];
+                var whatsappURL = "https://wa.me/" + selectedNumber + "?text=" + encodeURIComponent("Quero saber mais sobre essa oferta");
+                window.location.href = whatsappURL;
+            } catch (error) {
+                console.error('Erro ao obter o próximo número:', error);
+                alert('Desculpe, ocorreu um erro. Por favor, tente novamente mais tarde.');
+            }
+        }
 
-            // Cria a URL do WhatsApp com a mensagem padrão
-            var whatsappURL = "https://wa.me/" + selectedNumber + "?text=" + encodeURIComponent("Quero saber mais sobre essa oferta");
-
-            // Redireciona para o WhatsApp
-            window.location.href = whatsappURL;
-        };
+        // Redirecionar automaticamente quando a página carrega
+        window.onload = redirectToWhatsApp;
     </script>
 </head>
+
 <body>
+    <p>Redirecionando para WhatsApp...</p>
 </body>
+
 </html>
