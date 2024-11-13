@@ -1,26 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Redirecionamento para WhatsApp</title>
     <script>
-// Lista de números
-var numbers = ["5511952167370","5511961397377", "5511977990236", "5511959999181", "5511962183523", "5511984564873", "5511981122601", "5511987222977", "5511961375826", "5511959048153"];
+        // Lista de números
+        var numbers = ["5511952167370", "5511961397377", "5511977990236", "5511959999181", "5511962183523", "5511984564873", "5511981122601", "5511987222977", "5511961375826", "5511959048153"];
 
-// Ordena os números em ordem crescente
-numbers.sort();
+        function getNextNumber() {
+            // Recupera o índice do último número utilizado do localStorage
+            var lastIndex = parseInt(localStorage.getItem('lastIndex')) || 0;
 
-// Seleciona um número aleatório da lista
-var randomIndex = Math.floor(Math.random() * numbers.length);
-var selectedNumber = numbers[randomIndex];
+            // Calcula o próximo índice de forma circular
+            var nextIndex = (lastIndex + 1) % numbers.length;
 
-// Cria a URL do WhatsApp
-var whatsappURL = "https://wa.me/" + selectedNumber + "?text=" + encodeURIComponent("Quero saber mais sobre essa oferta");
+            // Atualiza o índice no localStorage
+            localStorage.setItem('lastIndex', nextIndex);
 
-// Redireciona para o WhatsApp
-window.location.href = whatsappURL;
+            // Retorna o próximo número da lista
+            return numbers[nextIndex];
+        }
 
+        // Função para redirecionar para WhatsApp com o próximo número na sequência
+        function redirectToWhatsApp() {
+            // Seleciona o próximo número
+            var selectedNumber = getNextNumber();
+
+            // Cria a URL do WhatsApp com mensagem padrão
+            var whatsappURL = "https://wa.me/" + selectedNumber + "?text=" + encodeURIComponent("Quero saber mais sobre essa oferta");
+
+            // Redireciona para o WhatsApp
+            window.location.href = whatsappURL;
+        }
+        onclick="redirectToWhatsApp()"
     </script>
 </head>
-<body>
-</body>
 </html>
-
