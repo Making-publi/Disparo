@@ -7,8 +7,11 @@
         var numbers = ["5511952167370","5511961397377", "5511977990236", "5511959999181", "5511962183523", "5511984564873", "5511981122601", "5511987222977", "5511961375826", "5511959048153"];
 
         function getNextNumber() {
-            // Recupera o índice do último número utilizado do localStorage
-            var lastIndex = parseInt(localStorage.getItem('lastIndex')) || -1;
+            // Recupera o índice do último número utilizado do localStorage, ou -1 se não existir
+            var lastIndex = parseInt(localStorage.getItem('lastIndex'));
+            if (isNaN(lastIndex)) {
+                lastIndex = -1;
+            }
 
             // Calcula o próximo índice de forma circular
             var nextIndex = (lastIndex + 1) % numbers.length;
